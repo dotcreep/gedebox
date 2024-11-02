@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload Release Assets
         run: |
-          for file in build/gedebox-*; do
+          for file in $(ls build/gedebox-*); do
             if [ -f "$file" ]; then
               echo "Uploading $file"
               curl -s -H "Authorization: token $GITHUB_TOKEN" \
