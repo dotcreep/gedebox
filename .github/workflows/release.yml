@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*.*.*' 
+      - 'v*.*.*'
     branches: [main]
 
 jobs:
@@ -23,14 +23,17 @@ jobs:
           OS_LIST=("linux" "darwin" "windows")
           ARCH_LIST=("386" "amd64" "arm" "arm64")
   
+      - name: Create build directory
+        run: mkdir -p build
+
       - name: Build binary
         run: |
           for OS in "${OS_LIST[@]}"; do
             for ARCH in "${ARCH_LIST[@]}"; do
               if [ "$OS" = "windows" ]; then
-                GOOS=$OS GOARCH=$ARCH go build -o gedebox-${OS}_${ARCH}.exe .
+                GOOS=$OS GOARCH=$ARCH go build -o build/gedebox-${OS}_${ARCH}.exe .
               else
-                GOOS=$OS GOARCH=$ARCH go build -o gedebox-${OS}_${ARCH} .
+                GOOS=$OS GOARCH=$ARCH go build -o build/gedebox-${OS}_${ARCH} .
               fi
             done
           done
@@ -53,11 +56,15 @@ jobs:
       - name: Upload Release Assets
         run: |
           for file in build/gedebox-*; do
-            echo "Uploading $file"
-            curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                 -H "Content-Type: application/octet-stream" \
-                 --data-binary @"$file" \
-                 "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
+            if [ -f "$file" ]; then
+              echo "Uploading $file"
+              curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                   -H "Content-Type: application/octet-stream" \
+                   --data-binary @"$file" \
+                   "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
+            else
+              echo "File $file not found, skipping."
+            fi
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
