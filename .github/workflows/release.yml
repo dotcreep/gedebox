@@ -31,7 +31,7 @@ jobs:
           for OS in "${OS_LIST[@]}"; do
             for ARCH in "${ARCH_LIST[@]}"; do
               GOOS=$OS GOARCH=$ARCH go build -o build/gedebox-${OS}-${ARCH}
-              echo ${OS}-${ARCH}
+              echo "${OS}-${ARCH}"
             done
           done
           ls -la
