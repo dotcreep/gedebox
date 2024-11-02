@@ -9,10 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goos: [linux, darwin, windows]
-        goarch: [amd64, 386, arm, arm64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,29 +18,22 @@ jobs:
         with:
           go-version: '1.23.2'
 
+      - name: Set variables
+        run: |
+          OS_LIST=("linux" "darwin" "windows")
+          ARCH_LIST=("386" "amd64" "arm" "arm64")
+  
       - name: Build binary
         run: |
-          mkdir -p build
-          EXT=""
-          if [ "${{ matrix.goos }}" == "windows" ]; then
-            EXT=".exe"
-          fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o build/gedebox-${{ matrix.goos }}-${{ matrix.goarch }}${EXT} main.go
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: gedebox-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: build/gedebox-${{ matrix.goos }}-${{ matrix.goarch }}*
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: build
+          for OS in "${OS_LIST[@]}"; do
+            for ARCH in "${ARCH_LIST[@]}"; do
+              if [ "$OS" = "windows" ]; then
+                GOOS=$OS GOARCH=$ARCH go build -o gedebox-${OS}_${ARCH}.exe .
+              else
+                GOOS=$OS GOARCH=$ARCH go build -o gedebox-${OS}_${ARCH} .
+              fi
+            done
+          done
 
       - name: Create Release
         id: create_release
