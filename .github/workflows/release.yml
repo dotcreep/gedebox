@@ -1,0 +1,61 @@
+# .github/workflows/release.yaml
+
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'v1.0.0-alpha'
+        required: true
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [amd64, arm64]
+
+    steps:
+    - name: Setup Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.23.2'
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build
+      run: go build -o gedebox-${{ matrix.os }}-${{ matrix.arch }} main.go
+
+    - name: Rename for Windows
+      if: matrix.os == 'windows-latest'
+      run: rename gedebox-${{ matrix.os }}-${{ matrix.arch }}.exe
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: Release ${{ github.event.inputs.version }}
+        body: |
+          New Release Gedebox with verion ${{ github.event.inputs.version }}.
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: gedebox-${{ matrix.os }}-${{ matrix.arch }}*
+        asset_name: gedebox-${{ matrix.os }}-${{ matrix.arch }}
+        asset_content_type: application/octet-stream
