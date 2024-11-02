@@ -7,11 +7,6 @@ on:
     types: [created]
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'v1.0.0-alpha'
-        required: true
 
 jobs:
   build:
@@ -43,10 +38,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.event.inputs.version }}
-        release_name: Release ${{ github.event.inputs.version }}
+        tag_name: v1.0.0-alpha
+        release_name: Release v1.0.0-alpha
         body: |
-          New Release Gedebox with verion ${{ github.event.inputs.version }}.
+          New Release Gedebox with version v1.0.0-alpha.
         draft: false
         prerelease: false
 
