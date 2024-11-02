@@ -45,12 +45,24 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Upload Release Asset
+    - name: Upload Release Asset on Windows
+      if: matrix.os == 'windows-latest'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./gedebox-${{ matrix.os }}-${{ matrix.arch }}*
-        asset_name: gedebox-${{ matrix.os }}-${{ matrix.arch }}*
+        asset_path: ./gedebox-${{ matrix.os }}-${{ matrix.arch }}.exe
+        asset_name: gedebox-${{ matrix.os }}-${{ matrix.arch }}.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Asset
+      if: matrix.os != 'windows-latest'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./gedebox-${{ matrix.os }}-${{ matrix.arch }}
+        asset_name: gedebox-${{ matrix.os }}-${{ matrix.arch }}
         asset_content_type: application/octet-stream
