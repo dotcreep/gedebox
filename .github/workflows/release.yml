@@ -38,10 +38,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0-alpha
-        release_name: Release v1.0.0-alpha
+        tag_name: v1.0.1-alpha
+        release_name: Release v1.0.1-alpha
         body: |
-          New Release Gedebox with version v1.0.0-alpha.
+          New Release Gedebox with version v1.0.1-alpha.
         draft: false
         prerelease: false
 
