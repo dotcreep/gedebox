@@ -37,6 +37,8 @@ jobs:
               fi
             done
           done
+          ls -la
+          ls -la build
 
       - name: Create Release
         id: create_release
