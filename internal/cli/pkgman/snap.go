@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"gedebox/system"
+	"github.com/dotcreep/gedebox/internal/cli/system"
 )
 
 func SNAP(option string, pkgs string) {

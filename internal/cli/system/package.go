@@ -46,9 +46,9 @@ func GetLinuxPackageManager(distroID string) string {
 	case "netbsd":
 		return "pkgin"
 	case "debian":
-		return "apt"
+		return "apt-get"
 	case "ubuntu":
-		return "apt"
+		return "apt-get"
 	case "fedora":
 		return "dnf"
 	case "centos":
@@ -70,7 +70,8 @@ func GetLinuxPackageManager(distroID string) string {
 	case "sles":
 		return "zypper"
 	default:
-		for _, pkg := range []string{"pacman", "apk", "zypper", "xbps-install", "pkg", "yum", "dnf", "apt", "apt-get"} {
+		// "apt",
+		for _, pkg := range []string{"pacman", "apk", "zypper", "xbps-install", "pkg", "yum", "dnf", "apt-get"} {
 			if Where(pkg) != "" {
 				return pkg
 			}

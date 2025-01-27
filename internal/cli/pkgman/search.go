@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func Search(pkgs string) {
@@ -27,7 +28,7 @@ func Search(pkgs string) {
 		case "brew", "port":
 			cmd = exec.Command("brew", "search", pkgs)
 		default:
-			if err := handler.OpError(macpacman); err != nil {
+			if err := utils.OpError(macpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
@@ -37,14 +38,14 @@ func Search(pkgs string) {
 		case "choco", "winget", "scoop":
 			cmd = exec.Command(winpacman, "search", pkgs)
 		default:
-			if err := handler.OpError(winpacman); err != nil {
+			if err := utils.OpError(winpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	case "linux":
 		switch pacman {
-		case "apt", "dnf", "yum", "pkg", "zypper", "apk", "pkgin":
+		case "dnf", "yum", "pkg", "zypper", "apk", "pkgin": // "apt",
 			cmd = exec.Command(pacman, "search", pkgs)
 		case "apt-get":
 			cmd = exec.Command("apt-cache", "search", pkgs)
@@ -57,13 +58,13 @@ func Search(pkgs string) {
 		case "pkg_add":
 			cmd = exec.Command("pkg_info", "-Q", pkgs)
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.OpError(distro); err != nil {
+		if err := utils.OpError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

@@ -13,15 +13,15 @@ declare -A platforms=(
     ["windows/arm64"]="$APP-windows-arm64.exe"
 )
 
-if [[ ! -d "build" ]]; then
-    mkdir build
+if [[ ! -d "bin" ]]; then
+    mkdir bin
 fi
 
 for platform in "${!platforms[@]}"; do
     IFS="/" read -r os arch <<< "$platform"
     output=${platforms[$platform]}
     echo "Build for $os $arch..."
-    GOOS=$os GOARCH=$arch go build -o build/$output
+    GOOS=$os GOARCH=$arch go build -o ./bin/$output cmd/main.go
 done
 
 echo "Build done!"

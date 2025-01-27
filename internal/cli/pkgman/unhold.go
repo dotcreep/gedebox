@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func Unhold(pkgs string) {
@@ -24,12 +25,12 @@ func Unhold(pkgs string) {
 	case "termux":
 		cmd = exec.Command("pkg", "unhold", pkgs)
 	case "macos":
-		if err := handler.OpError(macpacman); err != nil {
+		if err := utils.OpError(macpacman); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 	case "windows":
-		if err := handler.OpError(winpacman); err != nil {
+		if err := utils.OpError(winpacman); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
@@ -66,13 +67,13 @@ func Unhold(pkgs string) {
 				cmd = exec.Command(su, "bash", "-c", fmt.Sprintf("sed -i \"/%s/d\" /etc/portage/package.mask", pkgs))
 			}
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.DistError(distro); err != nil {
+		if err := utils.DistError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

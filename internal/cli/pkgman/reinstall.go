@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func Reinstall(pkgs string) {
@@ -31,7 +32,7 @@ func Reinstall(pkgs string) {
 			Uninstall(pkgs)
 			Install(pkgs)
 		default:
-			if err := handler.OpError(macpacman); err != nil {
+			if err := utils.OpError(macpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
@@ -45,14 +46,14 @@ func Reinstall(pkgs string) {
 		case "scoop":
 			cmd = exec.Command("scoop", "install", pkgs)
 		default:
-			if err := handler.OpError(winpacman); err != nil {
+			if err := utils.OpError(winpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	case "linux":
 		switch pacman {
-		case "apt", "apt-get", "dnf", "yum", "pkgin":
+		case "apt-get", "dnf", "yum", "pkgin": // "apt",
 			if su == "" {
 				cmd = exec.Command(pacman, "reinstall", "-y", pkgs)
 			} else {
@@ -95,13 +96,13 @@ func Reinstall(pkgs string) {
 			Uninstall(pkgs)
 			Install(pkgs)
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.DistError(distro); err != nil {
+		if err := utils.DistError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

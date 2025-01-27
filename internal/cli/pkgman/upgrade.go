@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func Upgrade() {
@@ -26,7 +27,7 @@ func Upgrade() {
 		case "port":
 			cmd = exec.Command("port", "upgrade")
 		default:
-			if err := handler.OpError(macpacman); err != nil {
+			if err := utils.OpError(macpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
@@ -40,14 +41,14 @@ func Upgrade() {
 		case "scoop":
 			cmd = exec.Command("scoop", "update", "*")
 		default:
-			if err := handler.OpError(winpacman); err != nil {
+			if err := utils.OpError(winpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	case "linux":
 		switch pacman {
-		case "apt", "apt-get", "pkg":
+		case "apt-get", "pkg": // "apt",
 			if su == "" {
 				cmd = exec.Command(pacman, "upgrade", "-y")
 			} else {
@@ -84,13 +85,13 @@ func Upgrade() {
 				cmd = exec.Command(su, pacman, "upgrade", "--no-cache", "--update")
 			}
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.OpError(distro); err != nil {
+		if err := utils.OpError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

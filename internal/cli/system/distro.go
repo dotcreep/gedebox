@@ -3,6 +3,7 @@ package system
 import (
 	"bufio"
 	"os"
+	"os/exec"
 	"runtime"
 	"strings"
 )
@@ -16,7 +17,22 @@ func Distro() string {
 		return "macos"
 	case "linux":
 		path := "/data/data/com.termux/"
-		if PathExists(path) {
+		prefix := os.Getenv("PREFIX")
+		var prefixdir bool
+		if _, err := os.Stat(prefix); os.IsNotExist(err) {
+			prefixdir = false
+		} else {
+			prefixdir = true
+		}
+		var cmds bool
+		cmd := exec.Command("command", "-v", "pkg")
+		err := cmd.Run()
+		if err != nil {
+			cmds = false
+		} else {
+			cmds = true
+		}
+		if PathExists(path) && prefix != "" && prefixdir && cmds {
 			return "termux"
 		}
 		return "linux"

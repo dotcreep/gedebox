@@ -1,13 +1,14 @@
 package pkgman
 
 import (
-	"gedebox/system"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
 )
 
-func Main() {
+func MainPackage() {
 	programName := filepath.Base(os.Args[0])
 	pkg := os.Args[1:]
 	pkgs := strings.Join(pkg, " ")

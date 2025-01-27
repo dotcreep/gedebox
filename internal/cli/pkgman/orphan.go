@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func Orphan() {
@@ -24,7 +25,7 @@ func Orphan() {
 		case "brew":
 			cmd = exec.Command("brew", "cleanup")
 		default:
-			if err := handler.OpError(macpacman); err != nil {
+			if err := utils.OpError(macpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
@@ -38,14 +39,14 @@ func Orphan() {
 		case "scoop":
 			cmd = exec.Command("scoop", "cleanup")
 		default:
-			if err := handler.OpError(winpacman); err != nil {
+			if err := utils.OpError(winpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	case "linux":
 		switch pacman {
-		case "apt", "apt-get", "dnf", "yum":
+		case "apt-get", "dnf", "yum": // "apt",
 			if su == "" {
 				cmd = exec.Command(pacman, "autoremove")
 			} else {
@@ -78,13 +79,13 @@ func Orphan() {
 		case "emerge":
 			cmd = exec.Command(su, pacman, "--depclean")
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.DistError(distro); err != nil {
+		if err := utils.DistError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}

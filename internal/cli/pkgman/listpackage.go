@@ -2,10 +2,11 @@ package pkgman
 
 import (
 	"fmt"
-	"gedebox/handler"
-	"gedebox/system"
 	"os"
 	"os/exec"
+
+	"github.com/dotcreep/gedebox/internal/cli/system"
+	"github.com/dotcreep/gedebox/internal/utils"
 )
 
 func List() {
@@ -25,7 +26,7 @@ func List() {
 		case "port":
 			cmd = exec.Command(macpacman, "installed")
 		default:
-			if err := handler.OpError(macpacman); err != nil {
+			if err := utils.OpError(macpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
@@ -40,15 +41,17 @@ func List() {
 		case "scoop":
 			cmd = exec.Command("scoop", "list")
 		default:
-			if err := handler.OpError(winpacman); err != nil {
+			if err := utils.OpError(winpacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	case "linux":
 		switch pacman {
-		case "apt", "apt-get":
-			cmd = exec.Command(pacman, "list", "--installed")
+		// case "apt":
+		// cmd = exec.Command(pacman, "list", "--installed")
+		case "apt-get":
+			cmd = exec.Command("apt-cache", "pkgnames")
 		case "yum", "dnf":
 			cmd = exec.Command(pacman, "list", "installed")
 		case "pkg":
@@ -68,13 +71,13 @@ func List() {
 		case "pkgin":
 			cmd = exec.Command("pkgin", "list")
 		default:
-			if err := handler.OpError(pacman); err != nil {
+			if err := utils.OpError(pacman); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 		}
 	default:
-		if err := handler.DistError(distro); err != nil {
+		if err := utils.DistError(distro); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
